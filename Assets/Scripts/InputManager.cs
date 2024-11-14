@@ -59,7 +59,7 @@ public class InputManager : MonoBehaviour
 
     private void HandleInteractionInput()
     {
-        if (playerFireAction.IsPressed() && interactionManager.isInteracting)
+        if (playerFireAction.IsPressed())
         {
             interactionManager.Interact();
         }

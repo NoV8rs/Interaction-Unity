@@ -3,33 +3,38 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using UnityEngine.Serialization;
 
 public class InteractionManager : MonoBehaviour
 {
     public CameraManager cameraManager;
     public Camera playerCam;
+    public UIManager uIManager;
     public int maxRayDistance;
-    public UIManager uiManager;
+
     [SerializeField]
     private GameObject target;
     private Interactable targetInteractable;
-    public bool isInteracting;
+    public bool interactionPossible;
+    
     void Awake()
     {
-        playerCam = cameraManager.playerCamera;
+        uIManager = FindObjectOfType<UIManager>();
         cameraManager = FindObjectOfType<CameraManager>();
-        uiManager = FindObjectOfType<UIManager>();
+        playerCam = cameraManager.playerCamera;
+       
     }
-
+    
+    // Update is called once per frame
     void Update()
     {
         if (target != null)
         {
-            isInteracting = true;
+            interactionPossible = true;
         }
         else
         {
-            isInteracting = false;
+            interactionPossible = false;
         }
     }
 
@@ -48,53 +53,53 @@ public class InteractionManager : MonoBehaviour
                 target = null;
                 targetInteractable = null;
             }
+            SetGameplayMessage();
         }
-        else
-        {
-            target = null;
-            targetInteractable = null;
-        }
-        SetGameplayMessage();
     }
     
     public void Interact()
     {
         if (targetInteractable == null) return;
-        switch(targetInteractable.type)
+        
+        string itemName = targetInteractable.pickupObject.itemName;
+        
+        switch (targetInteractable.type)
         {
             case Interactable.InteractionType.Door:
                 target.SetActive(false);
+                Debug.Log("Door Opened!");
                 break;
             case Interactable.InteractionType.Button:
-                targetInteractable.Activate();
+                target.SetActive(false);
+                Debug.Log("Button Pressed!");
                 break;
             case Interactable.InteractionType.Pickup:
-                targetInteractable.Activate();
                 target.SetActive(false);
+                Debug.Log("Picked up: " + itemName);
                 break;
         }
     }
-
+    
     void SetGameplayMessage()
     {
         string message = "";
-        if (targetInteractable != null)
+        if (targetInteractable == null)
         {
-            switch (targetInteractable.type)
-            {
-                case Interactable.InteractionType.Door:
-                    message = "Press LMB to open door";
-                    break;
-                case Interactable.InteractionType.Button:
-                    message = "Press LMB to activate button";
-                    break;
-                case Interactable.InteractionType.Pickup:
-                    message = "Press LMB to pick up item";
-                    break;
-            }
+            uIManager.UpdateGameplayMessage(message);
+            return;
         }
-        uiManager.UpdateGameplayMessage(message);
+        switch (targetInteractable.type)
+        {
+            case Interactable.InteractionType.Door:
+            message = "Press LMB to open door";
+            break;
+            case Interactable.InteractionType.Button:
+            message = "Press LMB to press button";
+            break;
+            case Interactable.InteractionType.Pickup:
+            message = "Press LMB to pickup item";
+            break;
+        }
+        uIManager.UpdateGameplayMessage(message);
     }
 }
-
-

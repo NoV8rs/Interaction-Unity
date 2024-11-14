@@ -13,19 +13,10 @@ public class Interactable : MonoBehaviour
 
     public InteractionType type;
     
+    public PickupObjects pickupObject;
+    
     public void Activate()
     {
-        if (type == InteractionType.Door)
-        {
-            Debug.Log("Door Opened");
-        }
-        else if (type == InteractionType.Button)
-        {
-            Debug.Log("Button Activated");
-        }
-        else if (type == InteractionType.Pickup)
-        {
-            Debug.Log("Item Picked Up");
-        }
+        Debug.Log("Interactable Activated" + this.name);
     }
 }
