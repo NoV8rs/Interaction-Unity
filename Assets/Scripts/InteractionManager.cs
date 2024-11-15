@@ -47,13 +47,20 @@ public class InteractionManager : MonoBehaviour
                 Debug.Log("Looking at " + hit.transform.gameObject.name);
                 target = hit.transform.gameObject;
                 targetInteractable = target.GetComponent<Interactable>();
+                SetGameplayMessage();
             }
             else
             {
                 target = null;
                 targetInteractable = null;
+                uIManager.UpdateGameplayMessage("");
             }
-            SetGameplayMessage();
+        }
+        else
+        {
+            target = null;
+            targetInteractable = null;
+            uIManager.UpdateGameplayMessage("");
         }
     }
     
